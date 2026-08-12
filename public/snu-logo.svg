@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 350" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38b6ff"/>
+      <stop offset="100%" stop-color="#0088cc"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7d070"/>
+      <stop offset="50%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#aa820a"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d32f2f"/>
+      <stop offset="100%" stop-color="#8b0000"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#dropShadow)">
+    <path d="M 150,25 C 240,20 270,100 250,240 C 230,290 180,310 150,310 C 120,310 70,290 50,240 C 30,100 60,20 150,25 Z" fill="url(#skyGrad)" stroke="url(#goldGrad)" stroke-width="8"/>
+    <path d="M 150,15 C 265,10 285,110 260,250 C 235,305 180,320 150,320 C 120,320 65,305 40,250 C 15,110 35,10 150,15 Z" fill="none" stroke="url(#goldGrad)" stroke-width="6" stroke-dasharray="14,6"/>
+    <polygon points="150,32 155,47 170,47 158,56 162,71 150,61 138,71 142,56 130,47 145,47" fill="#ffffff" stroke="url(#goldGrad)" stroke-width="1.5"/>
+
+    <g stroke="url(#goldGrad)" stroke-width="2.5" opacity="0.85">
+      <line x1="150" y1="140" x2="150" y2="75"/>
+      <line x1="150" y1="140" x2="120" y2="85"/>
+      <line x1="150" y1="140" x2="180" y2="85"/>
+      <line x1="150" y1="140" x2="95" y2="105"/>
+      <line x1="150" y1="140" x2="205" y2="105"/>
+      <line x1="150" y1="140" x2="80" y2="135"/>
+      <line x1="150" y1="140" x2="220" y2="135"/>
+    </g>
+
+    <path d="M 142,100 L 158,100 L 154,75 L 146,75 Z" fill="url(#goldGrad)"/>
+    
+    <g transform="translate(0, 30)">
+      <path d="M 150,195 C 120,185 85,190 65,200 L 65,135 C 85,125 120,120 150,135 Z" fill="#ffffff" stroke="url(#goldGrad)" stroke-width="3"/>
+      <path d="M 150,195 C 180,185 215,190 235,200 L 235,135 C 215,125 180,120 150,135 Z" fill="#ffffff" stroke="url(#goldGrad)" stroke-width="3"/>
+      <path d="M 80,145 Q 115,138 140,148 M 80,160 Q 115,153 140,163 M 80,175 Q 115,168 140,178" stroke="#aa820a" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <path d="M 220,145 Q 185,138 160,148 M 220,160 Q 185,153 160,163 M 220,175 Q 185,168 160,178" stroke="#aa820a" stroke-width="1.5" fill="none" opacity="0.5"/>
+    </g>
+
+    <g stroke="url(#goldGrad)" stroke-width="3" fill="none">
+      <line x1="150" y1="100" x2="150" y2="230"/>
+      <line x1="95" y1="130" x2="205" y2="130"/>
+      <line x1="95" y1="130" x2="80" y2="175" stroke-width="1.5"/>
+      <line x1="95" y1="130" x2="110" y2="175" stroke-width="1.5"/>
+      <path d="M 75,175 Q 95,185 115,175" fill="url(#goldGrad)" stroke-width="2"/>
+      <line x1="205" y1="130" x2="190" y2="175" stroke-width="1.5"/>
+      <line x1="205" y1="130" x2="220" y2="175" stroke-width="1.5"/>
+      <path d="M 185,175 Q 205,185 225,175" fill="url(#goldGrad)" stroke-width="2"/>
+    </g>
+
+    <g transform="translate(0, 10)">
+      <path d="M 40,285 L 70,270 L 230,270 L 260,285 L 280,310 L 250,305 L 230,320 L 70,320 L 50,305 L 20,310 Z" fill="url(#redGrad)" stroke="url(#goldGrad)" stroke-width="3"/>
+      <path d="M 50,295 Q 150,320 250,295" fill="none" id="textArc"/>
+      <text font-family="'Inter', Arial, sans-serif" font-weight="bold" font-size="11.5" fill="#ffffff" text-anchor="middle">
+        <textPath href="#textArc" startOffset="50%">JAAMACADDA UMMADDA SOOMAALIYEED</textPath>
+      </text>
+    </g>
+  </g>
+</svg>
