@@ -122,4 +122,53 @@ async function buildContextBlock() {
     .join('\n\n');
 }
 
-module.exports = { seed, getAllEntries, buildContextBlock };
+// Common filler words to ignore when scoring matches (English + a few Somali equivalents)
+const STOPWORDS = new Set([
+  'the', 'a', 'an', 'is', 'are', 'do', 'does', 'what', 'when', 'where', 'how', 'can', 'i',
+  'to', 'for', 'of', 'in', 'on', 'and', 'or', 'my', 'me', 'you', 'your', 'it', 'be', 'will',
+  'ma', 'waa', 'iyo', 'ku', 'ah', 'oo', 'ee', 'la', 'iyagoo', 'sida', 'miyaa'
+]);
+
+function tokenize(str) {
+  return (str || '')
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !STOPWORDS.has(w));
+}
+
+// Simple keyword-overlap search against the knowledge base — no AI call needed.
+// Used as a fallback when OpenRouter is rate-limited or unreachable.
+async function searchLocal(query, lang = 'en') {
+  const entries = await getAllEntries();
+  const queryWords = tokenize(query);
+  if (queryWords.length === 0) return null;
+
+  let best = null;
+  let bestScore = 0;
+
+  for (const entry of entries) {
+    const haystack = tokenize(
+      `${entry.category} ${entry.question} ${entry.answer_en} ${entry.answer_so || ''}`
+    );
+    const haystackSet = new Set(haystack);
+    let score = 0;
+    for (const w of queryWords) {
+      if (haystackSet.has(w)) score++;
+      // extra weight if the word appears in the question itself (closer match)
+      if (tokenize(entry.question).includes(w)) score += 1.5;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      best = entry;
+    }
+  }
+
+  // Require at least a modest match — avoids returning an unrelated entry for a totally off-topic question
+  if (!best || bestScore < 1.5) return null;
+
+  const answer = lang === 'so' ? best.answer_so || best.answer_en : best.answer_en;
+  return { category: best.category, question: best.question, answer };
+}
+
+module.exports = { seed, getAllEntries, buildContextBlock, searchLocal };
