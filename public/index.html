@@ -1,956 +1,1368 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SNU Admission Assistant — Somali National University</title>
-  <meta name="description" content="Official Admission Assistant for Somali National University (SNU). Get instant answers about requirements, deadlines, fees, and programs in English or Somali." />
+  <meta name="description"
+    content="Official Admission Assistant for Somali National University (SNU). Get instant answers about requirements, deadlines, fees, and programs in English or Somali." />
   <link rel="icon" type="image/png" href="/Snu.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+    rel="stylesheet" />
 
   <style>
-  /* ─── SNU Official Brand Theme & Tokens ─────────────────── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    /* Primary SNU Palette from Emblem */
-    --snu-blue:      #0b2545; /* Deep SNU Navy Blue */
-    --snu-blue-mid:  #134074; /* Classic SNU Blue */
-    --snu-sky:       #0096c7; /* SNU Emblem Sky Blue */
-    --snu-sky-light: #e0f2fe; /* Light Sky Tint */
-    --snu-gold:      #d4af37; /* SNU Emblem Gold */
-    --snu-gold-light:#fef08a; /* Soft Gold Tint */
-    --snu-red:       #c0392b; /* Emblem Ribbon Red */
-
-    /* UI Surfaces (Light Mode) */
-    --bg:            #f8fafc;
-    --bg-subtle:     #f1f5f9;
-    --white:         #ffffff;
-    --text-main:     #0f172a;
-    --text-muted:    #475569;
-    --text-faint:    #94a3b8;
-    --border-light:  #e2e8f0;
-    --border-blue:   #bae6fd;
-    
-    /* Shadows & Effects */
-    --shadow-sm:     0 2px 8px rgba(11,37,69,.04);
-    --shadow-md:     0 8px 30px rgba(11,37,69,.08);
-    --shadow-lg:     0 16px 48px rgba(0,150,199,.15);
-    --radius-lg:     20px;
-    --radius-md:     14px;
-    --ease:          cubic-bezier(.4,0,.2,1);
-  }
-
-  html, body {
-    height: 100%; width: 100%;
-    font-family: 'Inter', system-ui, sans-serif;
-    background:
-      radial-gradient(ellipse 1000px 700px at 50% -10%, rgba(0,150,199,.10) 0%, transparent 70%),
-      radial-gradient(circle at 85% 90%, rgba(212,175,55,.07) 0%, transparent 50%),
-      var(--bg);
-    color: var(--text-main);
-    -webkit-font-smoothing: antialiased;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Background Dot Grid Pattern */
-  body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
-    background-size: 32px 32px;
-    opacity: .4;
-  }
-
-  button { font-family: inherit; cursor: pointer; border: none; background: none; }
-  input  { font-family: inherit; }
-  a      { color: var(--snu-sky); }
-
-  /* ─── App Container (Fixed & Centered Frame) ─────────────── */
-  .app-container {
-    position: relative; z-index: 1;
-    width: 100%; max-width: 860px;
-    height: 100vh;
-    display: flex; flex-direction: column;
-    overflow: hidden;
-    background: var(--bg);
-  }
-
-  @media (min-height: 600px) and (min-width: 640px) {
-    .app-container {
-      height: 90vh;
-      max-height: 840px;
-      border-radius: 24px;
-      border: 1.5px solid var(--border-light);
-      box-shadow: 0 16px 48px rgba(11,37,69,.10), var(--shadow-sm);
+    /* ─── SNU Official Brand Theme & Tokens ─────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-  }
 
-  /* ─── Screen Container ──────────────────────────────────── */
-  .screen {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    width: 100%; height: 100%;
-    transition: opacity .35s var(--ease), transform .35s var(--ease);
-  }
-  .screen.hidden {
-    opacity: 0; pointer-events: none;
-    transform: translateY(-16px);
-  }
+    :root {
+      /* Primary SNU Palette from Emblem */
+      --snu-blue: #0b2545;
+      /* Deep SNU Navy Blue */
+      --snu-blue-mid: #134074;
+      /* Classic SNU Blue */
+      --snu-sky: #0096c7;
+      /* SNU Emblem Sky Blue */
+      --snu-sky-light: #e0f2fe;
+      /* Light Sky Tint */
+      --snu-gold: #d4af37;
+      /* SNU Emblem Gold */
+      --snu-gold-light: #fef08a;
+      /* Soft Gold Tint */
+      --snu-red: #c0392b;
+      /* Emblem Ribbon Red */
 
-  /* ═══════════════════════════════════════════════════════════
+      /* UI Surfaces (Light Mode) */
+      --bg: #f8fafc;
+      --bg-subtle: #f1f5f9;
+      --white: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-faint: #94a3b8;
+      --border-light: #e2e8f0;
+      --border-blue: #bae6fd;
+
+      /* Shadows & Effects */
+      --shadow-sm: 0 2px 8px rgba(11, 37, 69, .04);
+      --shadow-md: 0 8px 30px rgba(11, 37, 69, .08);
+      --shadow-lg: 0 16px 48px rgba(0, 150, 199, .15);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --ease: cubic-bezier(.4, 0, .2, 1);
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Inter', system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 1000px 700px at 50% -10%, rgba(0, 150, 199, .10) 0%, transparent 70%),
+        radial-gradient(circle at 85% 90%, rgba(212, 175, 55, .07) 0%, transparent 50%),
+        var(--bg);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Background Dot Grid Pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: .4;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    input {
+      font-family: inherit;
+    }
+
+    a {
+      color: var(--snu-sky);
+    }
+
+    /* ─── App Container (Fixed & Centered Frame) ─────────────── */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 860px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    @media (min-height: 600px) and (min-width: 640px) {
+      .app-container {
+        height: 90vh;
+        max-height: 840px;
+        border-radius: 24px;
+        border: 1.5px solid var(--border-light);
+        box-shadow: 0 16px 48px rgba(11, 37, 69, .10), var(--shadow-sm);
+      }
+    }
+
+    /* ─── Screen Container ──────────────────────────────────── */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      transition: opacity .35s var(--ease), transform .35s var(--ease);
+    }
+
+    .screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-16px);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
      1. WELCOME SCREEN
   ═══════════════════════════════════════════════════════════ */
-  #welcome {
-    align-items: center; justify-content: center;
-    overflow-y: auto;
-    padding: 32px 20px 48px;
-    background: var(--bg);
-  }
+    #welcome {
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 32px 20px 48px;
+      background: var(--bg);
+    }
 
-  .welcome-inner {
-    position: relative; z-index: 1;
-    display: flex; flex-direction: column; align-items: center;
-    gap: 28px;
-    width: 100%; max-width: 680px;
-  }
+    .welcome-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
+      max-width: 680px;
+    }
 
-  /* ── SNU Logo & Animated Orb ───────── */
-  .logo-orb-wrap {
-    position: relative;
-    width: 120px; height: 120px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .orb-ring {
-    position: absolute; border-radius: 50%;
-    border: 1.5px solid rgba(0,150,199,.25);
-    animation: pulseRing 3.5s var(--ease) infinite;
-  }
-  .orb-ring-1 { width: 100%; height: 100%; animation-delay: 0s; }
-  .orb-ring-2 { width: 130%; height: 130%; left: -15%; top: -15%; animation-delay: -1s; border-color: rgba(212,175,55,.3); }
-  
-  @keyframes pulseRing {
-    0%, 100% { transform: scale(1); opacity: .8; }
-    50%      { transform: scale(1.08); opacity: .3; }
-  }
+    /* ── SNU Logo & Animated Orb ───────── */
+    .logo-orb-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .snu-logo-img {
-    width: 90px; height: 90px;
-    object-fit: contain;
-    filter: drop-shadow(0 10px 20px rgba(11,37,69,.2));
-    animation: floatLogo 4s ease-in-out infinite;
-  }
-  @keyframes floatLogo {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-6px); }
-  }
+    .orb-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0, 150, 199, .25);
+      animation: pulseRing 3.5s var(--ease) infinite;
+    }
 
-  /* ── Headings & Titles ──────────────── */
-  .greeting { text-align: center; }
-  .greeting .university-tag {
-    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
-    color: var(--snu-sky); margin-bottom: 6px;
-  }
-  .greeting h1 {
-    font-size: clamp(26px, 5vw, 36px);
-    font-weight: 800; letter-spacing: -.6px;
-    color: var(--snu-blue);
-    background: linear-gradient(135deg, var(--snu-blue), var(--snu-sky));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .greeting p {
-    margin-top: 8px;
-    font-size: clamp(15px, 2.5vw, 17px);
-    color: var(--text-muted); font-weight: 400;
-  }
+    .orb-ring-1 {
+      width: 100%;
+      height: 100%;
+      animation-delay: 0s;
+    }
 
-  /* ── Language Switcher ──────────────── */
-  .lang-toggle {
-    display: inline-flex; align-items: center;
-    background: var(--white);
-    border: 1.5px solid var(--border-light);
-    border-radius: 999px;
-    padding: 4px;
-    box-shadow: var(--shadow-sm);
-    gap: 3px;
-  }
-  .lang-btn {
-    padding: 7px 22px;
-    border-radius: 999px;
-    font-size: 13px; font-weight: 600;
-    color: var(--text-muted);
-    transition: all .22s var(--ease);
-  }
-  .lang-btn.active {
-    background: linear-gradient(135deg, var(--snu-blue), var(--snu-blue-mid));
-    color: var(--white);
-    box-shadow: 0 3px 12px rgba(11,37,69,.25);
-  }
-  .lang-btn:not(.active):hover { background: var(--bg-subtle); color: var(--text-main); }
+    .orb-ring-2 {
+      width: 130%;
+      height: 130%;
+      left: -15%;
+      top: -15%;
+      animation-delay: -1s;
+      border-color: rgba(212, 175, 55, .3);
+    }
 
-  /* ── Search Input Box ───────────────── */
-  .welcome-input-box {
-    width: 100%;
-    background: var(--white);
-    border: 1.5px solid var(--border-light);
-    border-radius: 20px;
-    box-shadow: var(--shadow-md);
-    transition: border-color .22s, box-shadow .22s;
-    overflow: hidden;
-  }
-  .welcome-input-box:focus-within {
-    border-color: var(--snu-sky);
-    box-shadow: 0 0 0 4px rgba(0,150,199,.15), var(--shadow-md);
-  }
-  .welcome-input-row {
-    display: flex; align-items: center;
-    padding: 6px 8px 6px 20px; gap: 10px;
-  }
-  #welcome-input {
-    flex: 1; border: none; outline: none;
-    font-size: 15px; color: var(--text-main);
-    background: transparent; padding: 12px 0;
-  }
-  #welcome-input::placeholder { color: var(--text-faint); }
-  #welcome-send {
-    width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--snu-sky), var(--snu-blue-mid));
-    color: white; display: flex; align-items: center; justify-content: center;
-    transition: all .2s var(--ease);
-    box-shadow: 0 4px 14px rgba(0,150,199,.35);
-  }
-  #welcome-send:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,150,199,.45); }
-  #welcome-send:disabled { opacity: .5; transform: none; }
+    @keyframes pulseRing {
 
-  /* ── Quick Action Cards ─────────────── */
-  .quick-cards {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px; width: 100%;
-  }
-  .qcard {
-    background: var(--white);
-    border: 1.5px solid var(--border-light);
-    border-radius: 16px;
-    padding: 16px 14px;
-    text-align: left;
-    display: flex; flex-direction: column; gap: 10px;
-    transition: all .22s var(--ease);
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-  }
-  .qcard:hover {
-    border-color: var(--snu-sky);
-    box-shadow: 0 8px 24px rgba(0,150,199,.12);
-    transform: translateY(-3px);
-  }
-  .qcard-icon { font-size: 22px; line-height: 1; }
-  .qcard-title { font-size: 13px; font-weight: 700; color: var(--snu-blue); }
-  .qcard-sub   { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: .8;
+      }
 
-  /* ── Footer ──────────────────────────── */
-  .welcome-footer {
-    font-size: 12.5px; color: var(--text-faint); text-align: center;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .welcome-footer img { width: 18px; height: 18px; vertical-align: middle; }
-  .welcome-footer a { color: var(--snu-sky); text-decoration: none; font-weight: 500; }
-  .welcome-footer a:hover { text-decoration: underline; }
+      50% {
+        transform: scale(1.08);
+        opacity: .3;
+      }
+    }
 
-  @media (max-width: 600px) {
-    .quick-cards { grid-template-columns: repeat(2, 1fr); }
-  }
+    .snu-logo-img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(11, 37, 69, .2));
+      animation: floatLogo 4s ease-in-out infinite;
+    }
 
-  /* ═══════════════════════════════════════════════════════════
+    @keyframes floatLogo {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    /* ── Headings & Titles ──────────────── */
+    .greeting {
+      text-align: center;
+    }
+
+    .greeting .university-tag {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--snu-sky);
+      margin-bottom: 6px;
+    }
+
+    .greeting h1 {
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 800;
+      letter-spacing: -.6px;
+      color: var(--snu-blue);
+      background: linear-gradient(135deg, var(--snu-blue), var(--snu-sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .greeting p {
+      margin-top: 8px;
+      font-size: clamp(15px, 2.5vw, 17px);
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* ── Language Switcher ──────────────── */
+    .lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      background: var(--white);
+      border: 1.5px solid var(--border-light);
+      border-radius: 999px;
+      padding: 4px;
+      box-shadow: var(--shadow-sm);
+      gap: 3px;
+    }
+
+    .lang-btn {
+      padding: 7px 22px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all .22s var(--ease);
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--snu-blue), var(--snu-blue-mid));
+      color: var(--white);
+      box-shadow: 0 3px 12px rgba(11, 37, 69, .25);
+    }
+
+    .lang-btn:not(.active):hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    /* ── Search Input Box ───────────────── */
+    .welcome-input-box {
+      width: 100%;
+      background: var(--white);
+      border: 1.5px solid var(--border-light);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      transition: border-color .22s, box-shadow .22s;
+      overflow: hidden;
+    }
+
+    .welcome-input-box:focus-within {
+      border-color: var(--snu-sky);
+      box-shadow: 0 0 0 4px rgba(0, 150, 199, .15), var(--shadow-md);
+    }
+
+    .welcome-input-row {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px 6px 20px;
+      gap: 10px;
+    }
+
+    #welcome-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: var(--text-main);
+      background: transparent;
+      padding: 12px 0;
+    }
+
+    #welcome-input::placeholder {
+      color: var(--text-faint);
+    }
+
+    #welcome-send {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--snu-sky), var(--snu-blue-mid));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s var(--ease);
+      box-shadow: 0 4px 14px rgba(0, 150, 199, .35);
+    }
+
+    #welcome-send:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 150, 199, .45);
+    }
+
+    #welcome-send:disabled {
+      opacity: .5;
+      transform: none;
+    }
+
+    /* ── Quick Action Cards ─────────────── */
+    .quick-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .qcard {
+      background: var(--white);
+      border: 1.5px solid var(--border-light);
+      border-radius: 16px;
+      padding: 16px 14px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all .22s var(--ease);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .qcard:hover {
+      border-color: var(--snu-sky);
+      box-shadow: 0 8px 24px rgba(0, 150, 199, .12);
+      transform: translateY(-3px);
+    }
+
+    .qcard-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .qcard-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--snu-blue);
+    }
+
+    .qcard-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    /* ── Footer ──────────────────────────── */
+    .welcome-footer {
+      font-size: 12.5px;
+      color: var(--text-faint);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .welcome-footer img {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+    }
+
+    .welcome-footer a {
+      color: var(--snu-sky);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .welcome-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .quick-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
      2. CHAT INTERFACE SCREEN (Centered Card Layout)
   ═══════════════════════════════════════════════════════════ */
-  #chat {
-    background: var(--white);
-    transform: translateY(16px);
-  }
+    #chat {
+      background: var(--white);
+      transform: translateY(16px);
+    }
 
-  /* ── Chat Header ─────────────────────── */
-  .chat-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 22px;
-    background: var(--white);
-    border-bottom: 1.5px solid var(--border-light);
-    box-shadow: 0 2px 10px rgba(11,37,69,.03);
-    flex-shrink: 0; z-index: 10;
-    flex-wrap: wrap; gap: 10px;
-  }
-  .chat-brand { display: flex; align-items: center; gap: 12px; }
-  .chat-avatar-box {
-    width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
-    background: var(--snu-sky-light);
-    border: 1px solid var(--border-blue);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .chat-avatar-box img { width: 32px; height: 32px; object-fit: contain; }
-  .chat-avatar-box::after {
-    content: '';
-    position: absolute; bottom: -2px; right: -2px;
-    width: 11px; height: 11px;
-    background: #22c55e; border-radius: 50%;
-    border: 2px solid var(--white);
-  }
-  .chat-brand-text .title { font-size: 15px; font-weight: 700; color: var(--snu-blue); }
-  .chat-brand-text .sub   { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+    /* ── Chat Header ─────────────────────── */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px;
+      background: var(--white);
+      border-bottom: 1.5px solid var(--border-light);
+      box-shadow: 0 2px 10px rgba(11, 37, 69, .03);
+      flex-shrink: 0;
+      z-index: 10;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-  .chat-header-right { display: flex; align-items: center; gap: 10px; }
-  .lang-toggle.sm { padding: 3px; }
-  .lang-toggle.sm .lang-btn { padding: 5px 14px; font-size: 12px; }
+    .chat-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  .new-chat-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 10px;
-    font-size: 13px; font-weight: 600;
-    color: var(--snu-blue); border: 1.5px solid var(--border-blue);
-    background: var(--snu-sky-light);
-    transition: all .2s var(--ease);
-  }
-  .new-chat-btn:hover { background: var(--snu-blue); color: white; border-color: var(--snu-blue); }
+    .chat-avatar-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      background: var(--snu-sky-light);
+      border: 1px solid var(--border-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-  /* ── Messages Feed ───────────────────── */
-  .messages {
-    background: var(--bg);
-    flex: 1; overflow-y: auto;
-    padding: 24px 22px;
-    display: flex; flex-direction: column; gap: 16px;
-    scroll-behavior: smooth;
-  }
-  .messages::-webkit-scrollbar { width: 6px; }
-  .messages::-webkit-scrollbar-track { background: transparent; }
-  .messages::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 99px; }
+    .chat-avatar-box img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
 
-  .msg-row { display: flex; gap: 12px; align-items: flex-end; width: 100%; }
-  .msg-row.bot  { justify-content: flex-start; }
-  .msg-row.user { justify-content: flex-end; flex-direction: row-reverse; }
+    .chat-avatar-box::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 11px;
+      height: 11px;
+      background: #22c55e;
+      border-radius: 50%;
+      border: 2px solid var(--white);
+    }
 
-  .msg-av {
-    width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 15px;
-  }
-  .msg-av.bot-av  { background: var(--snu-sky-light); border: 1px solid var(--border-blue); }
-  .msg-av.bot-av img { width: 24px; height: 24px; object-fit: contain; }
-  .msg-av.user-av { background: #e2e8f0; color: var(--snu-blue); font-weight: bold; }
+    .chat-brand-text .title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--snu-blue);
+    }
 
-  .msg-col { display: flex; flex-direction: column; gap: 4px; max-width: 82%; }
-  .msg-row.user .msg-col { align-items: flex-end; }
+    .chat-brand-text .sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
 
-  .bubble {
-    padding: 13px 18px;
-    border-radius: 18px;
-    font-size: 14px; line-height: 1.65;
-    animation: popIn .22s var(--ease) both;
-  }
-  @keyframes popIn {
-    from { opacity: 0; transform: scale(.96) translateY(6px); }
-    to   { opacity: 1; transform: scale(1)   translateY(0); }
-  }
-  .bubble.bot {
-    background: var(--white);
-    border: 1.5px solid var(--border-light);
-    border-bottom-left-radius: 4px;
-    color: var(--text-main);
-    box-shadow: var(--shadow-sm);
-  }
-  .bubble.user {
-    background: linear-gradient(135deg, var(--snu-blue), var(--snu-blue-mid));
-    color: white;
-    border-bottom-right-radius: 4px;
-    box-shadow: 0 4px 16px rgba(11,37,69,.2);
-  }
+    .chat-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-  /* Inline Formatting inside bot bubble */
-  .bubble.bot strong { font-weight: 700; color: var(--snu-blue); }
-  .bubble.bot em     { font-style: italic; }
-  .bubble.bot h1,.bubble.bot h2,.bubble.bot h3 {
-    font-size: 14.5px; font-weight: 700;
-    margin: 10px 0 4px; color: var(--snu-blue);
-  }
-  .bubble.bot h1:first-child,
-  .bubble.bot h2:first-child,
-  .bubble.bot h3:first-child { margin-top: 0; }
-  .bubble.bot ul,.bubble.bot ol { padding-left: 20px; margin: 8px 0; }
-  .bubble.bot li { margin: 4px 0; }
-  .bubble.bot p  { margin: 6px 0; }
-  .bubble.bot p:first-child { margin-top: 0; }
-  .bubble.bot p:last-child  { margin-bottom: 0; }
-  .bubble.bot code {
-    background: var(--bg-subtle); border-radius: 4px;
-    padding: 2px 6px; font-size: 12.5px; font-family: monospace;
-  }
+    .lang-toggle.sm {
+      padding: 3px;
+    }
 
-  .msg-time { font-size: 10px; color: var(--text-faint); padding: 0 4px; }
+    .lang-toggle.sm .lang-btn {
+      padding: 5px 14px;
+      font-size: 12px;
+    }
 
-  /* Typing Indicator */
-  .typing-row { display: flex; gap: 10px; align-items: flex-end; width: 100%; }
-  .typing-bubble {
-    padding: 14px 18px;
-    background: var(--white);
-    border: 1.5px solid var(--border-light);
-    border-radius: 18px; border-bottom-left-radius: 4px;
-    box-shadow: var(--shadow-sm);
-    display: flex; align-items: center; gap: 5px;
-    animation: popIn .2s var(--ease) both;
-  }
-  .td {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--snu-sky);
-    animation: tdBounce 1s ease-in-out infinite;
-  }
-  .td:nth-child(2) { animation-delay: .16s; }
-  .td:nth-child(3) { animation-delay: .32s; }
-  @keyframes tdBounce {
-    0%,80%,100% { transform: translateY(0); opacity: .4; }
-    40%          { transform: translateY(-5px); opacity: 1; }
-  }
+    .new-chat-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--snu-blue);
+      border: 1.5px solid var(--border-blue);
+      background: var(--snu-sky-light);
+      transition: all .2s var(--ease);
+    }
 
-  /* ── Chat Bottom Bar ─────────────────── */
-  .chat-bottom {
-    flex-shrink: 0;
-    background: var(--white);
-    border-top: 1.5px solid var(--border-light);
-  }
-  .chips {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    padding: 12px 20px 8px;
-  }
-  .chip {
-    padding: 6px 14px; border-radius: 999px;
-    font-size: 12.5px; font-weight: 500;
-    border: 1.5px solid var(--border-blue);
-    color: var(--snu-blue); background: var(--snu-sky-light);
-    transition: all .18s var(--ease);
-  }
-  .chip:hover { background: var(--snu-blue); color: white; border-color: var(--snu-blue); transform: translateY(-1px); }
+    .new-chat-btn:hover {
+      background: var(--snu-blue);
+      color: white;
+      border-color: var(--snu-blue);
+    }
 
-  .input-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 16px 16px;
-  }
-  #chat-input {
-    flex: 1; padding: 13px 18px;
-    border: 1.5px solid var(--border-light); border-radius: 14px;
-    font-size: 14px; outline: none; color: var(--text-main);
-    background: var(--bg); transition: border-color .2s, box-shadow .2s;
-  }
-  #chat-input:focus {
-    border-color: var(--snu-sky);
-    box-shadow: 0 0 0 3.5px rgba(0,150,199,.13);
-    background: var(--white);
-  }
-  #chat-input::placeholder { color: var(--text-faint); }
-  #chat-send {
-    width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--snu-sky), var(--snu-blue-mid));
-    color: white; display: flex; align-items: center; justify-content: center;
-    transition: all .2s var(--ease);
-    box-shadow: 0 3px 12px rgba(0,150,199,.3);
-  }
-  #chat-send:hover    { transform: scale(1.05); box-shadow: 0 5px 18px rgba(0,150,199,.45); }
-  #chat-send:disabled { opacity: .4; transform: none; pointer-events: none; }
+    /* ── Messages Feed ───────────────────── */
+    .messages {
+      background: var(--bg);
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scroll-behavior: smooth;
+    }
 
-  @media (max-width: 500px) {
-    .messages { padding: 16px 12px; }
-    .input-bar { padding: 8px 12px 14px; }
-    .chips { padding: 10px 12px 6px; }
-    .chat-header { padding: 10px 12px; }
-    .new-chat-btn span { display: none; }
-    .msg-col { max-width: 90%; }
-  }
+    .messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: var(--border-light);
+      border-radius: 99px;
+    }
+
+    .msg-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      width: 100%;
+    }
+
+    .msg-row.bot {
+      justify-content: flex-start;
+    }
+
+    .msg-row.user {
+      justify-content: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .msg-av {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .msg-av.bot-av {
+      background: var(--snu-sky-light);
+      border: 1px solid var(--border-blue);
+    }
+
+    .msg-av.bot-av img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .msg-av.user-av {
+      background: #e2e8f0;
+      color: var(--snu-blue);
+      font-weight: bold;
+    }
+
+    .msg-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 82%;
+    }
+
+    .msg-row.user .msg-col {
+      align-items: flex-end;
+    }
+
+    .bubble {
+      padding: 13px 18px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.65;
+      animation: popIn .22s var(--ease) both;
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(.96) translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .bubble.bot {
+      background: var(--white);
+      border: 1.5px solid var(--border-light);
+      border-bottom-left-radius: 4px;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .bubble.user {
+      background: linear-gradient(135deg, var(--snu-blue), var(--snu-blue-mid));
+      color: white;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 16px rgba(11, 37, 69, .2);
+    }
+
+    /* Inline Formatting inside bot bubble */
+    .bubble.bot strong {
+      font-weight: 700;
+      color: var(--snu-blue);
+    }
+
+    .bubble.bot em {
+      font-style: italic;
+    }
+
+    .bubble.bot h1,
+    .bubble.bot h2,
+    .bubble.bot h3 {
+      font-size: 14.5px;
+      font-weight: 700;
+      margin: 10px 0 4px;
+      color: var(--snu-blue);
+    }
+
+    .bubble.bot h1:first-child,
+    .bubble.bot h2:first-child,
+    .bubble.bot h3:first-child {
+      margin-top: 0;
+    }
+
+    .bubble.bot ul,
+    .bubble.bot ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    .bubble.bot li {
+      margin: 4px 0;
+    }
+
+    .bubble.bot p {
+      margin: 6px 0;
+    }
+
+    .bubble.bot p:first-child {
+      margin-top: 0;
+    }
+
+    .bubble.bot p:last-child {
+      margin-bottom: 0;
+    }
+
+    .bubble.bot code {
+      background: var(--bg-subtle);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12.5px;
+      font-family: monospace;
+    }
+
+    .msg-time {
+      font-size: 10px;
+      color: var(--text-faint);
+      padding: 0 4px;
+    }
+
+    /* Typing Indicator */
+    .typing-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      width: 100%;
+    }
+
+    .typing-bubble {
+      padding: 14px 18px;
+      background: var(--white);
+      border: 1.5px solid var(--border-light);
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      animation: popIn .2s var(--ease) both;
+    }
+
+    .td {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--snu-sky);
+      animation: tdBounce 1s ease-in-out infinite;
+    }
+
+    .td:nth-child(2) {
+      animation-delay: .16s;
+    }
+
+    .td:nth-child(3) {
+      animation-delay: .32s;
+    }
+
+    @keyframes tdBounce {
+
+      0%,
+      80%,
+      100% {
+        transform: translateY(0);
+        opacity: .4;
+      }
+
+      40% {
+        transform: translateY(-5px);
+        opacity: 1;
+      }
+    }
+
+    /* ── Chat Bottom Bar ─────────────────── */
+    .chat-bottom {
+      flex-shrink: 0;
+      background: var(--white);
+      border-top: 1.5px solid var(--border-light);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 20px 8px;
+    }
+
+    .chip {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      border: 1.5px solid var(--border-blue);
+      color: var(--snu-blue);
+      background: var(--snu-sky-light);
+      transition: all .18s var(--ease);
+    }
+
+    .chip:hover {
+      background: var(--snu-blue);
+      color: white;
+      border-color: var(--snu-blue);
+      transform: translateY(-1px);
+    }
+
+    .input-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px 16px;
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 13px 18px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 14px;
+      font-size: 14px;
+      outline: none;
+      color: var(--text-main);
+      background: var(--bg);
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    #chat-input:focus {
+      border-color: var(--snu-sky);
+      box-shadow: 0 0 0 3.5px rgba(0, 150, 199, .13);
+      background: var(--white);
+    }
+
+    #chat-input::placeholder {
+      color: var(--text-faint);
+    }
+
+    #chat-send {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--snu-sky), var(--snu-blue-mid));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s var(--ease);
+      box-shadow: 0 3px 12px rgba(0, 150, 199, .3);
+    }
+
+    #chat-send:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 18px rgba(0, 150, 199, .45);
+    }
+
+    #chat-send:disabled {
+      opacity: .4;
+      transform: none;
+      pointer-events: none;
+    }
+
+    @media (max-width: 500px) {
+      .messages {
+        padding: 16px 12px;
+      }
+
+      .input-bar {
+        padding: 8px 12px 14px;
+      }
+
+      .chips {
+        padding: 10px 12px 6px;
+      }
+
+      .chat-header {
+        padding: 10px 12px;
+      }
+
+      .new-chat-btn span {
+        display: none;
+      }
+
+      .msg-col {
+        max-width: 90%;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-<!-- ═══════════════════════════════════════════════════════
+  <!-- ═══════════════════════════════════════════════════════
      MAIN APP CENTERED CONTAINER
 ═══════════════════════════════════════════════════════ -->
-<main class="app-container" role="main">
+  <main class="app-container" role="main">
 
-  <!-- 1. WELCOME SCREEN -->
-  <div id="welcome" class="screen">
-    <div class="welcome-inner">
+    <!-- 1. WELCOME SCREEN -->
+    <div id="welcome" class="screen">
+      <div class="welcome-inner">
 
-      <!-- Official SNU Logo Emblem -->
-      <div class="logo-orb-wrap">
-        <div class="orb-ring orb-ring-1"></div>
-        <div class="orb-ring orb-ring-2"></div>
-        <img src="/Snu.png" onerror="this.src='/snu-logo.svg'" alt="Somali National University Emblem" class="snu-logo-img" />
+        <!-- Official SNU Logo Emblem -->
+        <div class="logo-orb-wrap">
+          <div class="orb-ring orb-ring-1"></div>
+          <div class="orb-ring orb-ring-2"></div>
+          <img src="/Snu.png" onerror="this.src='/snu-logo.svg'" alt="Somali National University Emblem"
+            class="snu-logo-img" />
+        </div>
+
+        <!-- Title & Greeting -->
+        <div class="greeting">
+          <div class="university-tag">Somali National University</div>
+          <h1 id="greet-heading">Asalaamu Alaykum! 👋</h1>
+          <p id="greet-sub">How can I help you with SNU admissions today?</p>
+        </div>
+
+        <!-- Language Toggle Switch (EN / SO) -->
+        <div class="lang-toggle" role="group" aria-label="Language selection">
+          <button class="lang-btn active" id="w-btn-en" data-lang="en">🇬🇧 English</button>
+          <button class="lang-btn" id="w-btn-so" data-lang="so">🇸🇴 Somali</button>
+        </div>
+
+        <!-- Search / Question Bar -->
+        <div class="welcome-input-box" role="search">
+          <div class="welcome-input-row">
+            <input id="welcome-input" type="text" placeholder="Ask me anything about SNU admissions…" autocomplete="off"
+              maxlength="500" aria-label="Type your question" />
+            <button id="welcome-send" aria-label="Send message">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Action Cards -->
+        <div class="quick-cards" id="quick-cards" role="toolbar" aria-label="Quick topics">
+          <button class="qcard" data-en="What are the undergraduate admission requirements at SNU?"
+            data-so="Maxay yihiin shuruudaha gelitaanka barnaamijyada heerka shahaadada koowaad ee SNU?">
+            <span class="qcard-icon">📋</span>
+            <div>
+              <div class="qcard-title" id="qc-title-0">Requirements</div>
+              <div class="qcard-sub" id="qc-sub-0">Eligibility criteria</div>
+            </div>
+          </button>
+
+          <button class="qcard" data-en="When is the application deadline for SNU admissions?"
+            data-so="Goorma ayay xidhantahay taariikhda kama dambaysta ah ee codsiga SNU?">
+            <span class="qcard-icon">📅</span>
+            <div>
+              <div class="qcard-title" id="qc-title-1">Deadlines</div>
+              <div class="qcard-sub" id="qc-sub-1">Application timeline</div>
+            </div>
+          </button>
+
+          <button class="qcard" data-en="What are the tuition fees and administrative charges at SNU by faculty?"
+            data-so="Immisa ayay tahay lacagaha maamulka iyo kharashyada SNU ee kulliyad kasta?">
+            <span class="qcard-icon">💳</span>
+            <div>
+              <div class="qcard-title" id="qc-title-2">Fees &amp; Costs</div>
+              <div class="qcard-sub" id="qc-sub-2">Tuition &amp; admin fees</div>
+            </div>
+          </button>
+
+          <button class="qcard" data-en="What faculties and degree programs does SNU offer?"
+            data-so="Maxay yihiin kulliyadaha iyo barnaamijyada shahaadada ee SNU?">
+            <span class="qcard-icon">🏛️</span>
+            <div>
+              <div class="qcard-title" id="qc-title-3">Programs</div>
+              <div class="qcard-sub" id="qc-sub-3">Faculties &amp; degrees</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="welcome-footer">
+          <img src="/Snu.png" onerror="this.src='/snu-logo.svg'" alt="SNU" />
+          <span>Official SNU AI Centre Project · <a href="mailto:ai@snu.edu.so">ai@snu.edu.so</a></span>
+        </div>
+
       </div>
+    </div>
 
-      <!-- Title & Greeting -->
-      <div class="greeting">
-        <div class="university-tag">Somali National University</div>
-        <h1 id="greet-heading">Asalaamu Alaykum! 👋</h1>
-        <p id="greet-sub">How can I help you with SNU admissions today?</p>
-      </div>
 
-      <!-- Language Toggle Switch (EN / SO) -->
-      <div class="lang-toggle" role="group" aria-label="Language selection">
-        <button class="lang-btn active" id="w-btn-en" data-lang="en">🇬🇧 English</button>
-        <button class="lang-btn"        id="w-btn-so" data-lang="so">🇸🇴 Somali</button>
-      </div>
+    <!-- 2. CHAT INTERFACE SCREEN -->
+    <div id="chat" class="screen hidden" aria-label="Chat">
 
-      <!-- Search / Question Bar -->
-      <div class="welcome-input-box" role="search">
-        <div class="welcome-input-row">
-          <input
-            id="welcome-input"
-            type="text"
-            placeholder="Ask me anything about SNU admissions…"
-            autocomplete="off"
-            maxlength="500"
-            aria-label="Type your question"
-          />
-          <button id="welcome-send" aria-label="Send message">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      <!-- Header -->
+      <header class="chat-header">
+        <div class="chat-brand">
+          <div class="chat-avatar-box">
+            <img src="/Snu.png" onerror="this.src='/snu-logo.svg'" alt="SNU Logo" />
+          </div>
+          <div class="chat-brand-text">
+            <div class="title">SNU Admission Assistant</div>
+            <div class="sub">Somali National University · Online</div>
+          </div>
+        </div>
+
+        <div class="chat-header-right">
+          <div class="lang-toggle sm" role="group" aria-label="Language">
+            <button class="lang-btn active" id="c-btn-en" data-lang="en">EN</button>
+            <button class="lang-btn" id="c-btn-so" data-lang="so">SO</button>
+          </div>
+          <button class="new-chat-btn" id="new-chat-btn" title="Start a new conversation">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>New Chat</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Messages Feed -->
+      <div class="messages" id="messages" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+      <!-- Bottom Input Bar + Topic Chips -->
+      <div class="chat-bottom">
+        <div class="chips" id="chips" role="toolbar" aria-label="Quick questions">
+          <button class="chip" data-en="What are the admission requirements?"
+            data-so="Maxay yihiin shuruudaha gelitaanka?">Requirements</button>
+          <button class="chip" data-en="What is the application deadline?"
+            data-so="Goorma waa taariikhda kama dambaysta ah?">Deadlines</button>
+          <button class="chip" data-en="What are the fees at SNU?"
+            data-so="Immisa ayay tahay lacagaha SNU?">Fees</button>
+          <button class="chip" data-en="What programs does SNU offer?"
+            data-so="Maxay yihiin barnaamijyada SNU?">Programs</button>
+          <button class="chip" data-en="How do I apply to SNU step by step?"
+            data-so="Sidee ugu codsan karaa SNU tallaabo tallaabo?">How to Apply</button>
+        </div>
+        <div class="input-bar">
+          <input id="chat-input" type="text" placeholder="Ask a follow-up question…" autocomplete="off" maxlength="500"
+            aria-label="Type your message" />
+          <button id="chat-send" aria-label="Send">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
             </svg>
           </button>
         </div>
       </div>
 
-      <!-- Quick Action Cards -->
-      <div class="quick-cards" id="quick-cards" role="toolbar" aria-label="Quick topics">
-        <button class="qcard"
-          data-en="What are the undergraduate admission requirements at SNU?"
-          data-so="Maxay yihiin shuruudaha gelitaanka barnaamijyada heerka shahaadada koowaad ee SNU?">
-          <span class="qcard-icon">📋</span>
-          <div>
-            <div class="qcard-title" id="qc-title-0">Requirements</div>
-            <div class="qcard-sub"  id="qc-sub-0">Eligibility criteria</div>
-          </div>
-        </button>
-
-        <button class="qcard"
-          data-en="When is the application deadline for SNU admissions?"
-          data-so="Goorma ayay xidhantahay taariikhda kama dambaysta ah ee codsiga SNU?">
-          <span class="qcard-icon">📅</span>
-          <div>
-            <div class="qcard-title" id="qc-title-1">Deadlines</div>
-            <div class="qcard-sub"  id="qc-sub-1">Application timeline</div>
-          </div>
-        </button>
-
-        <button class="qcard"
-          data-en="What are the tuition fees and administrative charges at SNU by faculty?"
-          data-so="Immisa ayay tahay lacagaha maamulka iyo kharashyada SNU ee kulliyad kasta?">
-          <span class="qcard-icon">💳</span>
-          <div>
-            <div class="qcard-title" id="qc-title-2">Fees &amp; Costs</div>
-            <div class="qcard-sub"  id="qc-sub-2">Tuition &amp; admin fees</div>
-          </div>
-        </button>
-
-        <button class="qcard"
-          data-en="What faculties and degree programs does SNU offer?"
-          data-so="Maxay yihiin kulliyadaha iyo barnaamijyada shahaadada ee SNU?">
-          <span class="qcard-icon">🏛️</span>
-          <div>
-            <div class="qcard-title" id="qc-title-3">Programs</div>
-            <div class="qcard-sub"  id="qc-sub-3">Faculties &amp; degrees</div>
-          </div>
-        </button>
-      </div>
-
-      <!-- Footer -->
-      <div class="welcome-footer">
-        <img src="/Snu.png" onerror="this.src='/snu-logo.svg'" alt="SNU" />
-        <span>Official SNU AI Centre Project · <a href="mailto:ai@snu.edu.so">ai@snu.edu.so</a></span>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- 2. CHAT INTERFACE SCREEN -->
-  <div id="chat" class="screen hidden" aria-label="Chat">
-
-    <!-- Header -->
-    <header class="chat-header">
-      <div class="chat-brand">
-        <div class="chat-avatar-box">
-          <img src="/Snu.png" onerror="this.src='/snu-logo.svg'" alt="SNU Logo" />
-        </div>
-        <div class="chat-brand-text">
-          <div class="title">SNU Admission Assistant</div>
-          <div class="sub">Somali National University · Online</div>
-        </div>
-      </div>
-
-      <div class="chat-header-right">
-        <div class="lang-toggle sm" role="group" aria-label="Language">
-          <button class="lang-btn active" id="c-btn-en" data-lang="en">EN</button>
-          <button class="lang-btn"        id="c-btn-so" data-lang="so">SO</button>
-        </div>
-        <button class="new-chat-btn" id="new-chat-btn" title="Start a new conversation">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          <span>New Chat</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Messages Feed -->
-    <div class="messages" id="messages" role="log" aria-live="polite" aria-label="Conversation"></div>
-
-    <!-- Bottom Input Bar + Topic Chips -->
-    <div class="chat-bottom">
-      <div class="chips" id="chips" role="toolbar" aria-label="Quick questions">
-        <button class="chip" data-en="What are the admission requirements?" data-so="Maxay yihiin shuruudaha gelitaanka?">Requirements</button>
-        <button class="chip" data-en="What is the application deadline?"    data-so="Goorma waa taariikhda kama dambaysta ah?">Deadlines</button>
-        <button class="chip" data-en="What are the fees at SNU?"            data-so="Immisa ayay tahay lacagaha SNU?">Fees</button>
-        <button class="chip" data-en="What programs does SNU offer?"        data-so="Maxay yihiin barnaamijyada SNU?">Programs</button>
-        <button class="chip" data-en="How do I apply to SNU step by step?"  data-so="Sidee ugu codsan karaa SNU tallaabo tallaabo?">How to Apply</button>
-      </div>
-      <div class="input-bar">
-        <input
-          id="chat-input"
-          type="text"
-          placeholder="Ask a follow-up question…"
-          autocomplete="off"
-          maxlength="500"
-          aria-label="Type your message"
-        />
-        <button id="chat-send" aria-label="Send">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
-        </button>
-      </div>
     </div>
 
-  </div>
-
-</main>
+  </main>
 
 
-<script>
-/* ─────────────────────────────────────────────────────────────
-   INLINE MARKDOWN RENDERER (Clean & Bulletproof)
-───────────────────────────────────────────────────────────── */
-function renderMd(raw) {
-  if (!raw) return '';
+  <script>
+    /* ─────────────────────────────────────────────────────────────
+       INLINE MARKDOWN RENDERER (Clean & Bulletproof)
+    ───────────────────────────────────────────────────────────── */
+    function renderMd(raw) {
+      if (!raw) return '';
 
-  function esc(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-  function inline(s) {
-    return esc(s)
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g,     '<em>$1</em>')
-      .replace(/`(.+?)`/g,       '<code>$1</code>');
-  }
+      function esc(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+      function inline(s) {
+        return esc(s)
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em>$1</em>')
+          .replace(/`(.+?)`/g, '<code>$1</code>');
+      }
 
-  const lines = raw.split('\n');
-  const out = [];
-  let i = 0;
+      const lines = raw.split('\n');
+      const out = [];
+      let i = 0;
 
-  while (i < lines.length) {
-    const raw_line = lines[i];
-    const line = raw_line.trim();
+      while (i < lines.length) {
+        const raw_line = lines[i];
+        const line = raw_line.trim();
 
-    if (!line) { i++; continue; }
+        if (!line) { i++; continue; }
 
-    // Headings
-    const hm = line.match(/^(#{1,3})\s+(.*)/);
-    if (hm) {
-      out.push(`<h${hm[1].length}>${inline(hm[2])}</h${hm[1].length}>`);
-      i++; continue;
-    }
+        // Headings
+        const hm = line.match(/^(#{1,3})\s+(.*)/);
+        if (hm) {
+          out.push(`<h${hm[1].length}>${inline(hm[2])}</h${hm[1].length}>`);
+          i++; continue;
+        }
 
-    // Unordered list block
-    if (/^[-*•]\s/.test(line)) {
-      const items = [];
-      while (i < lines.length && /^[-*•]\s/.test(lines[i].trim())) {
-        items.push(`<li>${inline(lines[i].trim().replace(/^[-*•]\s/, ''))}</li>`);
+        // Unordered list block
+        if (/^[-*•]\s/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^[-*•]\s/.test(lines[i].trim())) {
+            items.push(`<li>${inline(lines[i].trim().replace(/^[-*•]\s/, ''))}</li>`);
+            i++;
+          }
+          out.push(`<ul>${items.join('')}</ul>`);
+          continue;
+        }
+
+        // Ordered list block
+        if (/^\d+\.\s/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
+            const m = lines[i].trim().match(/^\d+\.\s(.*)/);
+            items.push(`<li>${inline(m ? m[1] : '')}</li>`);
+            i++;
+          }
+          out.push(`<ol>${items.join('')}</ol>`);
+          continue;
+        }
+
+        out.push(`<p>${inline(line)}</p>`);
         i++;
       }
-      out.push(`<ul>${items.join('')}</ul>`);
-      continue;
+
+      return out.join('');
     }
 
-    // Ordered list block
-    if (/^\d+\.\s/.test(line)) {
-      const items = [];
-      while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
-        const m = lines[i].trim().match(/^\d+\.\s(.*)/);
-        items.push(`<li>${inline(m ? m[1] : '')}</li>`);
-        i++;
-      }
-      out.push(`<ol>${items.join('')}</ol>`);
-      continue;
+    /* ─────────────────────────────────────────────────────────────
+       APPLICATION STATE & DICTIONARY
+    ───────────────────────────────────────────────────────────── */
+    let lang = 'en';   // 'en' | 'so'
+    let history = [];
+    let busy = false;
+
+    const strings = {
+      en: {
+        greetH: 'Asalaamu Alaykum! 👋',
+        greetSub: 'How can I help you with SNU admissions today?',
+        placeholder: 'Ask me anything about SNU admissions…',
+        chatPh: 'Ask a follow-up question…',
+        cards: [
+          ['Requirements', 'Eligibility criteria'],
+          ['Deadlines', 'Application timeline'],
+          ['Fees & Costs', 'Tuition & admin fees'],
+          ['Programs', 'Faculties & degrees'],
+        ],
+      },
+      so: {
+        greetH: 'Asalaamu Alaykum! 👋',
+        greetSub: 'Sideen kuu caawin karaa arrimaha gelitaanka SNU maanta?',
+        placeholder: 'Wax kasta i weydii oo ku saabsan gelitaanka SNU…',
+        chatPh: 'Su\'aal dheeri ah weydii…',
+        cards: [
+          ['Shuruudaha', 'Xaaladaha u qalma'],
+          ['Taariikhaha', 'Jadwalka codsiga'],
+          ['Lacagaha', 'Kharashyada waxbarasho'],
+          ['Barnaamijyada', 'Kulliyadaha & shahaadooyinka'],
+        ],
+      },
+    };
+
+    /* ─────────────────────────────────────────────────────────────
+       DOM ELEMENTS
+    ───────────────────────────────────────────────────────────── */
+    const welcomeEl = document.getElementById('welcome');
+    const chatEl = document.getElementById('chat');
+    const messagesEl = document.getElementById('messages');
+    const wInput = document.getElementById('welcome-input');
+    const wSend = document.getElementById('welcome-send');
+    const cInput = document.getElementById('chat-input');
+    const cSend = document.getElementById('chat-send');
+
+    /* ─────────────────────────────────────────────────────────────
+       LANGUAGE SWITCHER
+    ───────────────────────────────────────────────────────────── */
+    function setLang(l) {
+      lang = l;
+      const s = strings[l];
+
+      // Update headers & placeholders
+      document.getElementById('greet-heading').textContent = s.greetH;
+      document.getElementById('greet-sub').textContent = s.greetSub;
+      wInput.placeholder = s.placeholder;
+      cInput.placeholder = s.chatPh;
+
+      // Update card text
+      s.cards.forEach(([title, sub], idx) => {
+        const t = document.getElementById(`qc-title-${idx}`);
+        const b = document.getElementById(`qc-sub-${idx}`);
+        if (t) t.textContent = title;
+        if (b) b.textContent = sub;
+      });
+
+      // Update bottom chips
+      const chipLabels = {
+        en: ['Requirements', 'Deadlines', 'Fees', 'Programs', 'How to Apply'],
+        so: ['Shuruudaha', 'Taariikhaha', 'Lacagaha', 'Barnaamijyada', 'Sida loo codsado'],
+      };
+      document.querySelectorAll('.chip').forEach((c, i) => {
+        if (chipLabels[l][i]) c.textContent = chipLabels[l][i];
+      });
+
+      // Active state on language toggle buttons
+      ['w-btn-en', 'w-btn-so', 'c-btn-en', 'c-btn-so'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.toggle('active', btn.dataset.lang === l);
+      });
     }
 
-    out.push(`<p>${inline(line)}</p>`);
-    i++;
-  }
-
-  return out.join('');
-}
-
-/* ─────────────────────────────────────────────────────────────
-   APPLICATION STATE & DICTIONARY
-───────────────────────────────────────────────────────────── */
-let lang    = 'en';   // 'en' | 'so'
-let history = [];
-let busy    = false;
-
-const strings = {
-  en: {
-    greetH:      'Asalaamu Alaykum! 👋',
-    greetSub:    'How can I help you with SNU admissions today?',
-    placeholder: 'Ask me anything about SNU admissions…',
-    chatPh:      'Ask a follow-up question…',
-    cards:       [
-      ['Requirements', 'Eligibility criteria'],
-      ['Deadlines',    'Application timeline'],
-      ['Fees & Costs', 'Tuition & admin fees'],
-      ['Programs',     'Faculties & degrees'],
-    ],
-  },
-  so: {
-    greetH:      'Asalaamu Alaykum! 👋',
-    greetSub:    'Sideen kuu caawin karaa arrimaha gelitaanka SNU maanta?',
-    placeholder: 'Wax kasta i weydii oo ku saabsan gelitaanka SNU…',
-    chatPh:      'Su\'aal dheeri ah weydii…',
-    cards:       [
-      ['Shuruudaha',  'Xaaladaha u qalma'],
-      ['Taariikhaha', 'Jadwalka codsiga'],
-      ['Lacagaha',    'Kharashyada waxbarasho'],
-      ['Barnaamijyada','Kulliyadaha & shahaadooyinka'],
-    ],
-  },
-};
-
-/* ─────────────────────────────────────────────────────────────
-   DOM ELEMENTS
-───────────────────────────────────────────────────────────── */
-const welcomeEl   = document.getElementById('welcome');
-const chatEl      = document.getElementById('chat');
-const messagesEl  = document.getElementById('messages');
-const wInput      = document.getElementById('welcome-input');
-const wSend       = document.getElementById('welcome-send');
-const cInput      = document.getElementById('chat-input');
-const cSend       = document.getElementById('chat-send');
-
-/* ─────────────────────────────────────────────────────────────
-   LANGUAGE SWITCHER
-───────────────────────────────────────────────────────────── */
-function setLang(l) {
-  lang = l;
-  const s = strings[l];
-
-  // Update headers & placeholders
-  document.getElementById('greet-heading').textContent = s.greetH;
-  document.getElementById('greet-sub').textContent     = s.greetSub;
-  wInput.placeholder = s.placeholder;
-  cInput.placeholder = s.chatPh;
-
-  // Update card text
-  s.cards.forEach(([ title, sub ], idx) => {
-    const t = document.getElementById(`qc-title-${idx}`);
-    const b = document.getElementById(`qc-sub-${idx}`);
-    if (t) t.textContent = title;
-    if (b) b.textContent = sub;
-  });
-
-  // Update bottom chips
-  const chipLabels = {
-    en: ['Requirements','Deadlines','Fees','Programs','How to Apply'],
-    so: ['Shuruudaha','Taariikhaha','Lacagaha','Barnaamijyada','Sida loo codsado'],
-  };
-  document.querySelectorAll('.chip').forEach((c, i) => {
-    if (chipLabels[l][i]) c.textContent = chipLabels[l][i];
-  });
-
-  // Active state on language toggle buttons
-  ['w-btn-en','w-btn-so','c-btn-en','c-btn-so'].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.classList.toggle('active', btn.dataset.lang === l);
-  });
-}
-
-document.querySelectorAll('.lang-btn').forEach(btn => {
-  btn.addEventListener('click', () => setLang(btn.dataset.lang));
-});
-
-/* ─────────────────────────────────────────────────────────────
-   SCREEN TRANSITION MANAGEMENT
-───────────────────────────────────────────────────────────── */
-function showChat() {
-  welcomeEl.classList.add('hidden');
-  chatEl.classList.remove('hidden');
-  cInput.focus();
-}
-
-function resetToWelcome() {
-  history = [];
-  messagesEl.innerHTML = '';
-  chatEl.classList.add('hidden');
-  welcomeEl.classList.remove('hidden');
-  wInput.value = '';
-  wInput.focus();
-}
-
-document.getElementById('new-chat-btn').addEventListener('click', resetToWelcome);
-
-/* ─────────────────────────────────────────────────────────────
-   MESSAGE RENDERING
-───────────────────────────────────────────────────────────── */
-function getTime() {
-  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
-function addMessage(text, role, useMarkdown = false) {
-  const row = document.createElement('div');
-  row.className = `msg-row ${role}`;
-
-  const av = document.createElement('div');
-  av.className = `msg-av ${role}-av`;
-  av.setAttribute('aria-hidden', 'true');
-  
-  if (role === 'bot') {
-    av.innerHTML = '<img src="/Snu.png" onerror="this.src=\'/snu-logo.svg\'" alt="SNU" />';
-  } else {
-    av.textContent = '👤';
-  }
-
-  const col = document.createElement('div');
-  col.className = 'msg-col';
-
-  const bubble = document.createElement('div');
-  bubble.className = `bubble ${role}`;
-
-  if (useMarkdown && role === 'bot') {
-    bubble.innerHTML = renderMd(text);
-  } else {
-    bubble.textContent = text;
-  }
-
-  const time = document.createElement('span');
-  time.className = 'msg-time';
-  time.textContent = getTime();
-
-  col.appendChild(bubble);
-  col.appendChild(time);
-  row.appendChild(av);
-  row.appendChild(col);
-  messagesEl.appendChild(row);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-  return bubble;
-}
-
-function showTyping() {
-  const row = document.createElement('div');
-  row.className = 'typing-row'; row.id = 'typing';
-
-  const av = document.createElement('div');
-  av.className = 'msg-av bot-av'; av.setAttribute('aria-hidden','true');
-  av.innerHTML = '<img src="/Snu.png" onerror="this.src=\'/snu-logo.svg\'" alt="SNU" />';
-
-  const bub = document.createElement('div');
-  bub.className = 'typing-bubble';
-  bub.setAttribute('aria-label', 'Typing…');
-  bub.innerHTML = '<div class="td"></div><div class="td"></div><div class="td"></div>';
-
-  row.appendChild(av); row.appendChild(bub);
-  messagesEl.appendChild(row);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function removeTyping() {
-  const el = document.getElementById('typing');
-  if (el) el.remove();
-}
-
-/* ─────────────────────────────────────────────────────────────
-   SENDING & API HANDLING
-───────────────────────────────────────────────────────────── */
-async function sendMessage(text) {
-  text = text.trim();
-  if (!text || busy) return;
-
-  if (chatEl.classList.contains('hidden')) showChat();
-
-  busy = true;
-  wSend.disabled = true;
-  cSend.disabled = true;
-  wInput.value = '';
-  cInput.value = '';
-
-  addMessage(text, 'user');
-  history.push({ role: 'user', content: text });
-  showTyping();
-
-  const apiText = lang === 'so'
-    ? text + ' (Fadlan ku jawaab Afka Soomaaliga.)'
-    : text;
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: apiText, history: history.slice(0, -1) })
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.lang));
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    removeTyping();
+    /* ─────────────────────────────────────────────────────────────
+       SCREEN TRANSITION MANAGEMENT
+    ───────────────────────────────────────────────────────────── */
+    function showChat() {
+      welcomeEl.classList.add('hidden');
+      chatEl.classList.remove('hidden');
+      cInput.focus();
+    }
 
-    const reply = data.reply || (lang === 'so'
-      ? "Waxaan ka xumahay, ma heli karin jawaab. Fadlan isku day mar kale."
-      : "Sorry, I couldn't generate a response. Please try again.");
+    function resetToWelcome() {
+      history = [];
+      messagesEl.innerHTML = '';
+      chatEl.classList.add('hidden');
+      welcomeEl.classList.remove('hidden');
+      wInput.value = '';
+      wInput.focus();
+    }
 
-    addMessage(reply, 'bot', true);
-    history.push({ role: 'assistant', content: reply });
+    document.getElementById('new-chat-btn').addEventListener('click', resetToWelcome);
 
-  } catch (err) {
-    removeTyping();
-    const errMsg = lang === 'so'
-      ? '⚠️ Xiriirka server-ka ayaa go\'ay. Fadlan isku day mar kale.'
-      : '⚠️ Could not reach the server. Please try again in a moment.';
-    addMessage(errMsg, 'bot');
-    console.error('Chat error:', err);
-  } finally {
-    busy = false;
-    wSend.disabled = false;
-    cSend.disabled = false;
-    cInput.focus();
-  }
-}
+    /* ─────────────────────────────────────────────────────────────
+       MESSAGE RENDERING
+    ───────────────────────────────────────────────────────────── */
+    function getTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
 
-/* ─────────────────────────────────────────────────────────────
-   EVENT LISTENERS
-───────────────────────────────────────────────────────────── */
-wSend.addEventListener('click', () => sendMessage(wInput.value));
-wInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(wInput.value); });
+    function addMessage(text, role, useMarkdown = false) {
+      const row = document.createElement('div');
+      row.className = `msg-row ${role}`;
 
-cSend.addEventListener('click', () => sendMessage(cInput.value));
-cInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(cInput.value); });
+      const av = document.createElement('div');
+      av.className = `msg-av ${role}-av`;
+      av.setAttribute('aria-hidden', 'true');
 
-document.getElementById('quick-cards').addEventListener('click', e => {
-  const card = e.target.closest('.qcard');
-  if (card) sendMessage(card.dataset[lang] || card.dataset.en);
-});
+      if (role === 'bot') {
+        av.innerHTML = '<img src="/Snu.png" onerror="this.src=\'/snu-logo.svg\'" alt="SNU" />';
+      } else {
+        av.textContent = '👤';
+      }
 
-document.getElementById('chips').addEventListener('click', e => {
-  const chip = e.target.closest('.chip');
-  if (chip) sendMessage(chip.dataset[lang] || chip.dataset.en);
-});
+      const col = document.createElement('div');
+      col.className = 'msg-col';
 
-/* Initialize default language */
-setLang('en');
-wInput.focus();
-</script>
+      const bubble = document.createElement('div');
+      bubble.className = `bubble ${role}`;
+
+      if (useMarkdown && role === 'bot') {
+        bubble.innerHTML = renderMd(text);
+      } else {
+        bubble.textContent = text;
+      }
+
+      const time = document.createElement('span');
+      time.className = 'msg-time';
+      time.textContent = getTime();
+
+      col.appendChild(bubble);
+      col.appendChild(time);
+      row.appendChild(av);
+      row.appendChild(col);
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return bubble;
+    }
+
+    function showTyping() {
+      const row = document.createElement('div');
+      row.className = 'typing-row'; row.id = 'typing';
+
+      const av = document.createElement('div');
+      av.className = 'msg-av bot-av'; av.setAttribute('aria-hidden', 'true');
+      av.innerHTML = '<img src="/Snu.png" onerror="this.src=\'/snu-logo.svg\'" alt="SNU" />';
+
+      const bub = document.createElement('div');
+      bub.className = 'typing-bubble';
+      bub.setAttribute('aria-label', 'Typing…');
+      bub.innerHTML = '<div class="td"></div><div class="td"></div><div class="td"></div>';
+
+      row.appendChild(av); row.appendChild(bub);
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('typing');
+      if (el) el.remove();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       SENDING & API HANDLING
+    ───────────────────────────────────────────────────────────── */
+    async function sendMessage(text) {
+      text = text.trim();
+      if (!text || busy) return;
+
+      if (chatEl.classList.contains('hidden')) showChat();
+
+      busy = true;
+      wSend.disabled = true;
+      cSend.disabled = true;
+      wInput.value = '';
+      cInput.value = '';
+
+      addMessage(text, 'user');
+      history.push({ role: 'user', content: text });
+      showTyping();
+
+      const apiText = lang === 'so'
+        ? text + ' (Fadlan ku jawaab Afka Soomaaliga.)'
+        : text;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: apiText, history: history.slice(0, -1), lang })
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        removeTyping();
+
+        const reply = data.reply || (lang === 'so'
+          ? "Waxaan ka xumahay, ma heli karin jawaab. Fadlan isku day mar kale."
+          : "Sorry, I couldn't generate a response. Please try again.");
+
+        addMessage(reply, 'bot', true);
+        history.push({ role: 'assistant', content: reply });
+
+      } catch (err) {
+        removeTyping();
+        const errMsg = lang === 'so'
+          ? '⚠️ Xiriirka server-ka ayaa go\'ay. Fadlan isku day mar kale.'
+          : '⚠️ Could not reach the server. Please try again in a moment.';
+        addMessage(errMsg, 'bot');
+        console.error('Chat error:', err);
+      } finally {
+        busy = false;
+        wSend.disabled = false;
+        cSend.disabled = false;
+        cInput.focus();
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       EVENT LISTENERS
+    ───────────────────────────────────────────────────────────── */
+    wSend.addEventListener('click', () => sendMessage(wInput.value));
+    wInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(wInput.value); });
+
+    cSend.addEventListener('click', () => sendMessage(cInput.value));
+    cInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(cInput.value); });
+
+    document.getElementById('quick-cards').addEventListener('click', e => {
+      const card = e.target.closest('.qcard');
+      if (card) sendMessage(card.dataset[lang] || card.dataset.en);
+    });
+
+    document.getElementById('chips').addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (chip) sendMessage(chip.dataset[lang] || chip.dataset.en);
+    });
+
+    /* Initialize default language */
+    setLang('en');
+    wInput.focus();
+  </script>
 </body>
+
 </html>

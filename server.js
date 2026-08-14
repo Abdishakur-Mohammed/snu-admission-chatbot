@@ -69,6 +69,11 @@ IMPORTANT: Respond with ONLY the final answer, addressed directly to the student
 reasoning, analysis, thinking process, or drafts. Do NOT include phrases like "here's my thinking" or
 "step 1" or "draft:" — just give the finished answer as if you were texting the student directly.
 
+CRITICAL FOR SOMALI: If replying in Somali, copy the Somali text from the "A (Somali)" field in the
+knowledge base EXACTLY as written — do not translate, paraphrase, or rewrite it yourself, and do not
+add any steps, requirements, or details that are not explicitly written there. Your own Somali
+generation is not reliable enough to be trusted for official admission information.
+
 Reply in the same language the student used (English or Somali). Keep answers concise and friendly.
 
 --- SNU ADMISSION KNOWLEDGE BASE ---
@@ -121,17 +126,39 @@ async function callOpenRouter(messages) {
   throw lastError || new Error('All OpenRouter models failed');
 }
 
+// A match score at or above this is trusted enough to answer directly from the
+// knowledge base, verbatim, without ever sending it through the AI model. This is
+// what prevents the AI from "helpfully" paraphrasing (and sometimes inventing
+// details in) your carefully written English/Somali text.
+const STRONG_MATCH_THRESHOLD = 3;
+
 app.post('/api/chat', async (req, res) => {
-  const { message, history = [] } = req.body;
+  const { message, history = [], lang } = req.body;
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'message is required' });
   }
 
-  // Guess the reply language from the student's message so the local fallback
-  // (if we need it) answers in the right language too.
+  // Prefer the language the frontend explicitly tells us (the EN/SO toggle the
+  // student picked) — far more reliable than guessing from word patterns in the
+  // message, which fails on short or unusual phrasing. Only fall back to a rough
+  // guess if the frontend didn't send one (e.g. an older client or direct API call).
   const somaliHint = /\b(iyo|maalin|jaamacad|codsi|shuruudo|waa|maad|sidee|goorma|imisa)\b/i.test(message);
-  const guessedLang = somaliHint ? 'so' : 'en';
+  const guessedLang = lang === 'so' || lang === 'en' ? lang : somaliHint ? 'so' : 'en';
 
+  // STEP 1: try a confident, exact knowledge-base match first. If we're confident
+  // this question matches a known FAQ, answer with the stored text directly —
+  // no AI involved, so no risk of paraphrasing errors or hallucinated details.
+  try {
+    const match = await searchLocal(message, guessedLang);
+    if (match && match.score >= STRONG_MATCH_THRESHOLD) {
+      return res.json({ reply: match.answer, source: 'knowledge_base_direct' });
+    }
+  } catch (kbErr) {
+    console.error('Local search failed, continuing to AI:', kbErr.message);
+  }
+
+  // STEP 2: no confident direct match — let the AI handle it conversationally,
+  // still grounded in the same knowledge base as context.
   try {
     const contextBlock = await buildContextBlock();
     const systemPrompt = buildSystemPrompt(contextBlock);
@@ -145,12 +172,14 @@ app.post('/api/chat', async (req, res) => {
       { role: 'user', content: message }
     ];
 
-    const reply = await callOpenRouter(messages);
+    const rawReply = await callOpenRouter(messages);
+    const reply = stripReasoning(rawReply);
     return res.json({ reply, source: 'ai' });
   } catch (err) {
     console.error('AI call failed, falling back to knowledge base search:', err.message);
 
-    // FALLBACK 1: try to answer directly from the knowledge base with keyword matching.
+    // STEP 3: AI failed entirely — fall back to a looser local match if we have one,
+    // even below the strong-match threshold, better than nothing.
     try {
       const match = await searchLocal(message, guessedLang);
       if (match) {
@@ -164,7 +193,7 @@ app.post('/api/chat', async (req, res) => {
       console.error('Knowledge base fallback also failed:', kbErr.message);
     }
 
-    // FALLBACK 2: nothing matched — final polite message.
+    // STEP 4: nothing matched at all — final polite message.
     const fallbackMsg =
       guessedLang === 'so'
         ? "Waan ka xumahay, hadda ma heli karo jawaab AI ah. Fadlan la xiriir xafiiska diiwaangelinta: https://snu.edu.so/admission/"
